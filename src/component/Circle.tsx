@@ -1,22 +1,25 @@
 import styled from "styled-components";
 
-interface ContainerProps {
-  bgColor: string;
-}
-
-const Container = styled.div<ContainerProps>`
+const Container = styled.div<IProps>`
   width: 100px;
   height: 100px;
   background-color: ${(props) => props.bgColor};
   border-radius: 50%;
+  border: 1px solid ${(props) => props.borderColor};
 `;
 
 interface IProps {
   bgColor: string;
+  borderColor?: string;
+  text?: string;
 }
 
-function Circle({ bgColor }: IProps) {
-  return <Container bgColor={bgColor}></Container>;
+function Circle({ bgColor, borderColor, text = "defalut text" }: IProps) {
+  return (
+    <Container bgColor={bgColor} borderColor={borderColor ?? bgColor}>
+      {text}
+    </Container>
+  );
 }
 
 export default Circle;
