@@ -1,28 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
-import Root from "./Root";
-import About from "./screens/About";
-import Home from "./screens/Home";
-import NotFound from "./screens/NotFound";
-import User from "./screens/users/User";
-import Followers from "./screens/users/Followers";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Coins from "./routes/Coins";
+import Coin from "./routes/Coin";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    children: [
-      { path: "", element: <Home /> },
-      { path: "about", element: <About /> },
-      {
-        path: "users/:userId",
-        element: <User />,
-        children: [{ path: "followers", element: <Followers /> },
-          { path: "following", element: <Followers /> }
-        ],
-      },
-    ],
-    errorElement: <NotFound />,
-  },
-]);
-
-export default router;
+function Router() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/:coinId" element={<Coin />} />
+        <Route path="/" element={<Coins />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+export default Router;
