@@ -12,6 +12,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { Helmet } from "react-helmet";
 const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
@@ -148,13 +149,24 @@ function Coin() {
   const priceMatch = useMatch(`/${coinId}/price`);
   const chartMatch = useMatch(`/${coinId}/chart`);
 
-  const {isLoading: infoLoading, data:infoData} = useQuery<IInfoData>({queryKey:[`info, ${coinId}`], queryFn:()=>fetchCoinInfo(`${coinId}`)})
-  const {isLoading:tickersLoading, data:tickersData} = useQuery<IPriceData>({queryKey:[`tickers, ${coinId}`], queryFn:()=>fetchCoinTickers(`${coinId}`)})
-  
-  const loading = infoLoading||tickersLoading;
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>({
+    queryKey: [`info, ${coinId}`],
+    queryFn: () => fetchCoinInfo(`${coinId}`),
+  });
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<IPriceData>(
+    {
+      queryKey: [`tickers, ${coinId}`],
+      queryFn: () => fetchCoinTickers(`${coinId}`),
+    },
+  );
+
+  const loading = infoLoading || tickersLoading;
 
   return (
     <Container>
+      <Helmet>
+        <title>{name ? name : loading ? "Loading..." : infoData?.name}</title>
+      </Helmet>
       <Header>
         <Title>{name ? name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
@@ -172,8 +184,8 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(2)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -198,7 +210,7 @@ function Coin() {
 
           <Routes>
             <Route path="price" element={<Price />} />
-            <Route path="chart" element={<Chart />} />
+            <Route path="chart" element={<Chart coinId={`${coinId}`} />} />
           </Routes>
         </>
       )}
